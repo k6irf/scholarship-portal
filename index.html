@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Scholarship Grade Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:100vh;color:#1a202c}
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+.login-box{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.10);padding:2.5rem 2rem;width:100%;max-width:380px}
+.brand{text-align:center;margin-bottom:2rem}
+.brand-icon{width:56px;height:56px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:26px}
+.brand h1{font-size:20px;font-weight:700;color:#1e3a5f}
+.brand p{font-size:13px;color:#64748b;margin-top:4px}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+.field select,.field input{width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;color:#1a202c;background:#fff;transition:border .2s}
+.field select:focus,.field input:focus{outline:none;border-color:#3b82f6}
+.btn-login{width:100%;padding:11px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+.btn-login:hover{opacity:.9}
+.login-err{font-size:12px;color:#ef4444;text-align:center;margin-top:10px;min-height:16px}
+.admin-hint{font-size:11px;color:#94a3b8;text-align:center;margin-top:14px}
+#app{display:none}
+.topbar{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.user-pill{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:13px}
+.btn-signout{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer}
+.btn-signout:hover{background:rgba(255,255,255,.25)}
+.main{max-width:860px;margin:0 auto;padding:1.5rem 1rem}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.section-header h2{font-size:18px;font-weight:700;color:#1e3a5f}
+.btn-new{background:#22c55e;color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-new:hover{background:#16a34a}
+.form-card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:1.5rem;margin-bottom:1.5rem;display:none}
+.form-card h3{font-size:16px;font-weight:700;color:#1e3a5f;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1.5px solid #e2e8f0}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row.four{grid-template-columns:1fr 1fr 1fr 1fr}
+.f-group label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.f-group input,.f-group select,.f-group textarea{width:100%;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1a202c;background:#fff;transition:border .2s}
+.f-group input:focus,.f-group select:focus,.f-group textarea:focus{outline:none;border-color:#3b82f6}
+.f-group textarea{resize:vertical;min-height:56px;font-family:inherit}
+.grades-section h4{font-size:13px;font-weight:700;color:#3b82f6;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.btn-cancel{padding:8px 18px;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;font-size:14px;cursor:pointer;color:#64748b}
+.btn-submit{padding:8px 22px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-submit:disabled{background:#93c5fd;cursor:not-allowed}
+.form-err{font-size:12px;color:#ef4444;text-align:right;margin-top:8px;min-height:16px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.f-btn{padding:5px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;font-size:13px;cursor:pointer;color:#64748b;font-weight:500}
+.f-btn.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
+.post-card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:1.25rem;margin-bottom:12px;border-left:4px solid #3b82f6}
+.post-card.hs{border-left-color:#f59e0b}
+.post-card.elem{border-left-color:#22c55e}
+.post-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;color:#fff}
+.post-meta h4{font-size:15px;font-weight:700;color:#1a202c}
+.post-meta p{font-size:12px;color:#64748b;margin-top:2px}
+.badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:10px;font-weight:600;margin-left:4px}
+.badge.elem{background:#dcfce7;color:#166534}
+.badge.hs{background:#fef3c7;color:#92400e}
+.badge.qtr{background:#eff6ff;color:#1d4ed8}
+.grade-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:5px 10px;text-align:center;min-width:72px}
+.chip .csubj{font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase}
+.chip .cval{font-size:16px;font-weight:700;color:#1e3a5f;margin-top:1px}
+.gwa-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.gwa-val{font-size:18px;font-weight:800;color:#1e3a5f}
+.honor-badge{font-size:11px;padding:3px 10px;border-radius:10px;font-weight:700}
+.honors{background:#fef9c3;color:#854d0e}
+.passed{background:#f0fdf4;color:#166534}
+.post-note{font-size:13px;color:#64748b;font-style:italic;border-top:1px solid #f1f5f9;margin-top:10px;padding-top:10px}
+.post-ts{font-size:11px;color:#cbd5e1;text-align:right;margin-top:8px}
+.empty{text-align:center;padding:3rem;color:#94a3b8;font-size:15px}
+.empty span{font-size:40px;display:block;margin-bottom:10px}
+.loading{text-align:center;padding:2rem;color:#64748b;font-size:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e3a5f;color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+@media(max-width:600px){
+  .form-row.four{grid-template-columns:1fr 1fr}
+  .topbar-brand{font-size:13px}
+  .user-pill{display:none}
+}
+
+.summary-card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:1.25rem;margin-bottom:12px;border-left:4px solid #8b5cf6}
+.summary-card.elem{border-left-color:#22c55e}
+.summary-card.hs{border-left-color:#f59e0b}
+.summary-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.summary-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:12px}
+.subj-avg{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 6px;text-align:center}
+.subj-avg .sa-name{font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;margin-bottom:3px}
+.subj-avg .sa-val{font-size:17px;font-weight:700;color:#1e3a5f}
+.subj-avg .sa-trend{font-size:10px;color:#64748b;margin-top:1px}
+.final-gwa-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;flex-wrap:wrap}
+.final-gwa-label{font-size:13px;color:#64748b;font-weight:600}
+.final-gwa-val{font-size:22px;font-weight:800;color:#1e3a5f}
+.qtrs-submitted{font-size:12px;color:#94a3b8;margin-left:auto}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <div class="brand">
+      <div class="brand-icon">🎓</div>
+      <h1>Scholarship Grade Portal</h1>
+      <p>Submit and view your quarterly grades</p>
+    </div>
+    <div class="field">
+      <label>Select your name</label>
+      <select id="sel-name"><option value="">-- choose your name --</option></select>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="inp-pw" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Sign In</button>
+    <div class="login-err" id="login-err"></div>
+    <p class="admin-hint">Admin login: name <strong>admin</strong> · password <strong>admin123</strong></p>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">🎓 Scholarship Grade Portal</div>
+    <div class="topbar-right">
+      <span class="user-pill" id="user-pill"></span>
+      <button class="btn-signout" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="section-header">
+      <h2>📋 Grade Board</h2>
+      <button class="btn-new" id="btn-new" onclick="toggleForm()">＋ Post My Grades</button>
+    </div>
+
+    <div class="form-card" id="form-card">
+      <h3>📝 Submit Quarterly Grades</h3>
+      <div class="form-row">
+        <div class="f-group">
+          <label>School Year</label>
+          <input type="text" id="f-syear" placeholder="e.g. 2024-2025"/>
+        </div>
+        <div class="f-group">
+          <label>Quarter</label>
+          <select id="f-quarter">
+            <option value="First Quarter">First Quarter</option>
+            <option value="Second Quarter">Second Quarter</option>
+            <option value="Third Quarter">Third Quarter</option>
+            <option value="Fourth Quarter">Fourth Quarter</option>
+          </select>
+        </div>
+      </div>
+      <div class="grades-section">
+        <h4>Subject Grades</h4>
+        <div class="form-row four">
+          <div class="f-group"><label>Filipino</label><input type="number" id="g-fil" min="60" max="100" placeholder="e.g. 92"/></div>
+          <div class="f-group"><label>English</label><input type="number" id="g-eng" min="60" max="100" placeholder="e.g. 88"/></div>
+          <div class="f-group"><label>Math</label><input type="number" id="g-math" min="60" max="100" placeholder="e.g. 90"/></div>
+          <div class="f-group"><label>Science</label><input type="number" id="g-sci" min="60" max="100" placeholder="e.g. 87"/></div>
+        </div>
+        <div class="form-row four">
+          <div class="f-group"><label>AP</label><input type="number" id="g-ap" min="60" max="100" placeholder="e.g. 89"/></div>
+          <div class="f-group"><label>MAPEH</label><input type="number" id="g-mapeh" min="60" max="100" placeholder="e.g. 91"/></div>
+          <div class="f-group"><label>EPP/TLE</label><input type="number" id="g-epp" min="60" max="100" placeholder="e.g. 90"/></div>
+          <div class="f-group"><label>ESP/Values</label><input type="number" id="g-esp" min="60" max="100" placeholder="e.g. 93"/></div>
+        </div>
+      </div>
+      <div class="f-group">
+        <label>Note / Message (optional)</label>
+        <textarea id="f-note" placeholder="e.g. Studied harder this quarter!"></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="toggleForm()">Cancel</button>
+        <button class="btn-submit" id="btn-submit" onclick="submitGrades()">Submit Grades</button>
+      </div>
+      <div class="form-err" id="form-err"></div>
+    </div>
+
+    <div class="filters">
+      <button class="f-btn active" onclick="setFilter(this,'all')">All</button>
+      <button class="f-btn" onclick="setFilter(this,'elem')">Grade School</button>
+      <button class="f-btn" onclick="setFilter(this,'hs')">High School</button>
+      <button class="f-btn" onclick="setFilter(this,'q1')">1st Quarter</button>
+      <button class="f-btn" onclick="setFilter(this,'q2')">2nd Quarter</button>
+      <button class="f-btn" onclick="setFilter(this,'q3')">3rd Quarter</button>
+      <button class="f-btn" onclick="setFilter(this,'q4')">4th Quarter</button>
+    </div>
+
+    <div id="posts-list"><div class="loading">⏳ Loading grades...</div></div>
+
+    <div id="summary-section" style="display:none;margin-top:2.5rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+        <h2 style="font-size:18px;font-weight:700;color:#1e3a5f">📊 Overall Summary</h2>
+        <span id="summary-note" style="font-size:12px;color:#94a3b8;font-style:italic"></span>
+      </div>
+      <div id="summary-cards"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwa888PwFmRbQlO9OVkpHFBB05WnShoDGVZ3BLb-MQSb5ZyJFUFaPxTk5F8METmhw6GAw/exec";
+
+const USERS = [
+  {name:"Maria Santos",      pw:"maria123",   level:"hs",   grade:"Grade 9"},
+  {name:"Juan dela Cruz",    pw:"juan123",    level:"elem", grade:"Grade 6"},
+  {name:"Ana Reyes",         pw:"ana123",     level:"hs",   grade:"Grade 11"},
+  {name:"Carlo Bautista",    pw:"carlo123",   level:"elem", grade:"Grade 5"},
+  {name:"Liza Gonzales",     pw:"liza123",    level:"hs",   grade:"Grade 10"},
+  {name:"Ramon Villanueva",  pw:"ramon123",   level:"elem", grade:"Grade 4"},
+  {name:"Cristina Flores",   pw:"cristina123",level:"hs",   grade:"Grade 12"},
+  {name:"Mark Fernandez",    pw:"mark123",    level:"elem", grade:"Grade 3"},
+];
+const ADMIN = {name:"admin", pw:"admin123", isAdmin:true};
+const AVATAR_COLORS = ["#3b82f6","#f59e0b","#22c55e","#ef4444","#8b5cf6","#06b6d4","#f97316","#ec4899"];
+
+let currentUser = null;
+let allPosts = [];
+let activeFilter = "all";
+let formOpen = false;
+let cbCounter = 0;
+
+(function init(){
+  const sel = document.getElementById("sel-name");
+  USERS.forEach(u => {
+    const o = document.createElement("option");
+    o.value = u.name;
+    o.textContent = u.name + " (" + u.grade + ")";
+    sel.appendChild(o);
+  });
+  const ao = document.createElement("option");
+  ao.value = "admin"; ao.textContent = "Admin";
+  sel.appendChild(ao);
+})();
+
+// JSONP helper — works from local file, no CORS issues
+function jsonpCall(url, callback) {
+  const cbName = "__cb" + (++cbCounter);
+  window[cbName] = function(data) {
+    delete window[cbName];
+    document.getElementById("jsonp-" + cbName) && document.getElementById("jsonp-" + cbName).remove();
+    callback(null, data);
+  };
+  const script = document.createElement("script");
+  script.id = "jsonp-" + cbName;
+  const sep = url.includes("?") ? "&" : "?";
+  script.src = url + sep + "callback=" + cbName;
+  script.onerror = function() {
+    delete window[cbName];
+    script.remove();
+    callback(new Error("Script load error"), null);
+  };
+  document.head.appendChild(script);
+}
+
+function doLogin(){
+  const nm = document.getElementById("sel-name").value;
+  const pw = document.getElementById("inp-pw").value;
+  const err = document.getElementById("login-err");
+  err.textContent = "";
+  if(!nm){ err.textContent = "Please select your name."; return; }
+  if(nm === "admin"){
+    if(pw !== ADMIN.pw){ err.textContent = "Wrong password."; return; }
+    currentUser = ADMIN;
+  } else {
+    const u = USERS.find(x => x.name === nm);
+    if(!u || pw !== u.pw){ err.textContent = "Wrong password."; return; }
+    currentUser = u;
+  }
+  document.getElementById("login-wrap").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  document.getElementById("user-pill").textContent = currentUser.isAdmin ? "Admin" : currentUser.name + " · " + currentUser.grade;
+  if(currentUser.isAdmin) document.getElementById("btn-new").style.display = "none";
+  loadPosts();
+}
+
+function doLogout(){
+  currentUser = null; allPosts = [];
+  document.getElementById("app").style.display = "none";
+  document.getElementById("login-wrap").style.display = "flex";
+  document.getElementById("inp-pw").value = "";
+  document.getElementById("login-err").textContent = "";
+  document.getElementById("form-card").style.display = "none";
+  formOpen = false;
+}
+
+function toggleForm(){
+  formOpen = !formOpen;
+  const fc = document.getElementById("form-card");
+  fc.style.display = formOpen ? "block" : "none";
+  if(formOpen) fc.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function submitGrades(){
+  const err = document.getElementById("form-err");
+  err.textContent = "";
+  const syear = document.getElementById("f-syear").value.trim();
+  if(!syear){ err.textContent = "Please enter the school year."; return; }
+  const subjs  = ["fil","eng","math","sci","ap","mapeh","epp","esp"];
+  const labels = ["Fil","Eng","Math","Sci","AP","MAPEH","EPP","ESP"];
+  const gradeVals = {};
+  for(let i = 0; i < subjs.length; i++){
+    const v = document.getElementById("g-" + subjs[i]).value;
+    if(!v){ err.textContent = "Please enter all subject grades."; return; }
+    const n = parseInt(v);
+    if(n < 60 || n > 100){ err.textContent = "Grades must be between 60 and 100."; return; }
+    gradeVals[labels[i]] = n;
+  }
+  const quarter  = document.getElementById("f-quarter").value;
+  const note     = document.getElementById("f-note").value.trim();
+  const gradeStr = Object.entries(gradeVals).map(([k,v]) => k+":"+v).join(", ");
+  const gwa      = (Object.values(gradeVals).reduce((a,b) => a+b, 0) / 8).toFixed(2);
+
+  const btn = document.getElementById("btn-submit");
+  btn.disabled = true; btn.textContent = "Submitting...";
+
+  const params = new URLSearchParams({
+    action:      "submit",
+    name:        currentUser.name,
+    gradeNumber: currentUser.grade,
+    quarter:     quarter,
+    grades:      gradeStr,
+    gwa:         gwa,
+    note:        note,
+    syear:       syear,
+    level:       currentUser.level
+  });
+
+  jsonpCall(APPS_SCRIPT_URL + "?" + params.toString(), function(err2, res){
+    btn.disabled = false; btn.textContent = "Submit Grades";
+    if(err2 || !res){
+      document.getElementById("form-err").textContent = "Connection error. Check your internet and try again.";
+      return;
+    }
+    if(res.status === "ok"){
+      showToast("✅ Grades submitted successfully!");
+      subjs.forEach(s => document.getElementById("g-" + s).value = "");
+      document.getElementById("f-note").value = "";
+      document.getElementById("f-syear").value = "";
+      toggleForm();
+      loadPosts();
+    } else {
+      document.getElementById("form-err").textContent = "Error: " + (res.message || "Submission failed.");
+    }
+  });
+}
+
+function loadPosts(){
+  document.getElementById("posts-list").innerHTML = '<div class="loading">⏳ Loading grades from sheet...</div>';
+  jsonpCall(APPS_SCRIPT_URL + "?action=getPosts", function(err2, data){
+    if(err2 || !data){
+      document.getElementById("posts-list").innerHTML = '<div class="empty"><span>⚠️</span>Could not connect to the sheet. Check your internet connection.</div>';
+      return;
+    }
+    allPosts = data.posts || [];
+    renderPosts();
+    renderSummary();
+  });
+}
+
+function parseGradeStr(str){
+  const result = {};
+  if(!str) return result;
+  str.split(",").forEach(part => {
+    const [k,v] = part.trim().split(":");
+    if(k && v) result[k.trim()] = parseFloat(v.trim());
+  });
+  return result;
+}
+
+function getInitials(name){
+  return name.split(" ").map(w => w[0]).slice(0,2).join("").toUpperCase();
+}
+
+function getAvatarColor(name){
+  let hash = 0;
+  for(let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
+function setFilter(el, f){
+  document.querySelectorAll(".f-btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  activeFilter = f;
+  renderPosts();
+}
+
+function renderPosts(){
+  let posts = allPosts;
+  if(activeFilter === "elem") posts = allPosts.filter(p => p.level === "elem");
+  else if(activeFilter === "hs")  posts = allPosts.filter(p => p.level === "hs");
+  else if(activeFilter === "q1")  posts = allPosts.filter(p => p.quarter === "First Quarter");
+  else if(activeFilter === "q2")  posts = allPosts.filter(p => p.quarter === "Second Quarter");
+  else if(activeFilter === "q3")  posts = allPosts.filter(p => p.quarter === "Third Quarter");
+  else if(activeFilter === "q4")  posts = allPosts.filter(p => p.quarter === "Fourth Quarter");
+
+  const list = document.getElementById("posts-list");
+  if(!posts.length){
+    list.innerHTML = '<div class="empty"><span>📭</span>No grade posts yet for this filter.</div>';
+    return;
+  }
+  list.innerHTML = posts.map(p => {
+    const grades = parseGradeStr(p.grades);
+    const vals   = Object.values(grades).filter(v => !isNaN(v));
+    const gwa    = vals.length ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(2) : (p.gwa || "—");
+    const lvl    = p.level || "elem";
+    const color  = getAvatarColor(p.name);
+    const chips  = Object.entries(grades).map(([s,v]) =>
+      `<div class="chip"><div class="csubj">${s}</div><div class="cval">${v}</div></div>`
+    ).join("");
+    const noteHtml = p.note ? `<div class="post-note">"${p.note}"</div>` : "";
+    const levelBadge = lvl === "hs"
+      ? '<span class="badge hs">High School</span>'
+      : '<span class="badge elem">Grade School</span>';
+    const isHonor = parseFloat(gwa) >= 90;
+    return `<div class="post-card ${lvl}">
+      <div class="post-header">
+        <div class="avatar" style="background:${color}">${getInitials(p.name)}</div>
+        <div class="post-meta">
+          <h4>${p.name} ${levelBadge} <span class="badge qtr">${p.quarter}</span></h4>
+          <p>${p.gradeNumber} · ${p.syear || ""}</p>
+        </div>
+      </div>
+      <div class="grade-chips">${chips}</div>
+      <div class="gwa-row">
+        <span style="font-size:13px;color:#64748b">GWA:</span>
+        <span class="gwa-val">${gwa}</span>
+        <span class="honor-badge ${isHonor ? 'honors' : 'passed'}">${isHonor ? '🏆 With Honors' : '✅ Passed'}</span>
+      </div>
+      ${noteHtml}
+      <div class="post-ts">Posted: ${p.timestamp || ""}</div>
+    </div>`;
+  }).join("");
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function renderSummary() {
+  const section = document.getElementById("summary-section");
+  const container = document.getElementById("summary-cards");
+  const note = document.getElementById("summary-note");
+  if (!allPosts.length) { section.style.display = "none"; return; }
+
+  // Group posts by student name
+  const byStudent = {};
+  allPosts.forEach(p => {
+    if (!byStudent[p.name]) byStudent[p.name] = {name:p.name, gradeNumber:p.gradeNumber, level:p.level||"elem", quarters:{}};
+    byStudent[p.name].quarters[p.quarter] = parseGradeStr(p.grades);
+  });
+
+  const students = Object.values(byStudent);
+  if (!students.length) { section.style.display = "none"; return; }
+
+  const SUBJECTS = ["Fil","Eng","Math","Sci","AP","MAPEH","EPP","ESP"];
+  const QTR_ORDER = ["First Quarter","Second Quarter","Third Quarter","Fourth Quarter"];
+
+  const cards = students.map(st => {
+    const submittedQtrs = QTR_ORDER.filter(q => st.quarters[q] && Object.keys(st.quarters[q]).length > 0);
+    const qCount = submittedQtrs.length;
+    const color  = getAvatarColor(st.name);
+    const lvl    = st.level;
+    const levelBadge = lvl === "hs"
+      ? '<span class="badge hs">High School</span>'
+      : '<span class="badge elem">Grade School</span>';
+
+    // Per-subject average across submitted quarters
+    const subjAvgs = {};
+    SUBJECTS.forEach(s => {
+      const vals = submittedQtrs.map(q => st.quarters[q][s]).filter(v => v !== undefined && !isNaN(v));
+      if (vals.length) subjAvgs[s] = (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+    });
+
+    // Quarter GWAs for trend display
+    const qtrGWAs = submittedQtrs.map(q => {
+      const vals = Object.values(st.quarters[q]).filter(v => !isNaN(v));
+      return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+    }).filter(v=>v!==null);
+
+    const finalGWA = qtrGWAs.length ? (qtrGWAs.reduce((a,b)=>a+b,0)/qtrGWAs.length).toFixed(2) : "—";
+    const isHonor  = parseFloat(finalGWA) >= 90;
+    const honorBadge = isHonor
+      ? '<span class="honor-badge honors">🏆 With Honors</span>'
+      : '<span class="honor-badge passed">✅ Passed</span>';
+
+    // Quarter GWA pills
+    const qtrPills = submittedQtrs.map((q,i) => {
+      const g = qtrGWAs[i] ? qtrGWAs[i].toFixed(2) : "—";
+      const short = q.replace(" Quarter","");
+      return `<span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:8px;font-weight:600">${short}: ${g}</span>`;
+    }).join(" ");
+
+    const subjBoxes = SUBJECTS.map(s => {
+      const v = subjAvgs[s] || "—";
+      return `<div class="subj-avg">
+        <div class="sa-name">${s}</div>
+        <div class="sa-val">${v}</div>
+      </div>`;
+    }).join("");
+
+    return `<div class="summary-card ${lvl}">
+      <div class="summary-header">
+        <div class="avatar" style="background:${color}">${getInitials(st.name)}</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1a202c">${st.name} ${levelBadge}</div>
+          <div style="font-size:12px;color:#64748b;margin-top:3px">${st.gradeNumber} &nbsp;·&nbsp; ${qCount} of 4 quarters submitted &nbsp; ${qtrPills}</div>
+        </div>
+      </div>
+      <div class="summary-body">${subjBoxes}</div>
+      <div class="final-gwa-row">
+        <span class="final-gwa-label">Final GWA</span>
+        <span class="final-gwa-val">${finalGWA}</span>
+        ${honorBadge}
+        <span class="qtrs-submitted">Based on ${qCount} quarter${qCount>1?"s":""}</span>
+      </div>
+    </div>`;
+  }).join("");
+
+  container.innerHTML = cards;
+  note.textContent = "Updates automatically as students submit each quarter.";
+  section.style.display = "block";
+}
+
+</script>
+</body>
+</html>
