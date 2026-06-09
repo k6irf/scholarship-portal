@@ -629,6 +629,7 @@ const AVATAR_COLORS = ["#3b82f6","#f59e0b","#22c55e","#ef4444","#8b5cf6","#06b6d
 function fullName(s){ return s.fname + " " + s.lname; }
 function birthYear(s){ return s.bday ? s.bday.split("-")[0] : ""; }
 function autoPw(s){ return s.customPw || (s.fname.trim().split(/\s+/)[0].toLowerCase() + birthYear(s)); }
+function normalizeName(n){ return (n||"").replace(/\.+/g,"").replace(/\s+/g," ").trim().toLowerCase(); }
 function getInitials(name){ return name.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase(); }
 function getAvatarColor(name){
   let h=0; for(let i=0;i<name.length;i++) h=name.charCodeAt(i)+((h<<5)-h);
@@ -1238,11 +1239,13 @@ function deleteGrade(key){
   });
   jsonpCall(APPS_SCRIPT_URL+"?"+params.toString(), function(e2,res){
     if(e2||!res){
-      showToast("⚠️ Removed locally but sheet sync failed. Reload to check.");
+      showToast("⚠️ Sheet sync failed — reload to verify deletion.");
       return;
     }
     if(res.status!=="ok"){
-      showToast("⚠️ Sheet error: "+(res.message||"Delete failed."));
+      // Show full error so we can see what name the sheet is looking for
+      showToast("⚠️ Sheet: "+(res.message||"Delete failed."));
+      console.error("Delete error:", res.message);
     }
   });
 }
