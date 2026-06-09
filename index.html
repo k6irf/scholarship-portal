@@ -1191,15 +1191,9 @@ function exportHtml(){
 
   // Find SCHOLARS block using start/end markers — robust against base64 content
   const startMarker = "let SCHOLARS = [";
-  const endMarker   = "];
-
-
-let nextScholId";
-  const altEndMarker = "];
-
-let nextScholId";
-  const altEndMarker2 = "];
-let nextScholId";
+  const endMarker   = "];\n\n\nlet nextScholId";
+  const altEndMarker = "];\n\nlet nextScholId";
+  const altEndMarker2 = "];\nlet nextScholId";
 
   let startIdx = currentHtml.indexOf(startMarker);
   if(startIdx === -1){ showToast("⚠️ Export failed — SCHOLARS marker not found."); return; }
