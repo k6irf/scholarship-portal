@@ -1184,49 +1184,30 @@ function removeModalPhoto(e){
 // EXPORT — regenerate HTML with current SCHOLARS (photos + all)
 // ============================================================
 function exportHtml(){
-  // Serialize current SCHOLARS array with all photos into the source
   const scholarsJson = JSON.stringify(SCHOLARS, null, 2);
   const nextId       = nextScholId;
   const currentHtml  = document.documentElement.outerHTML;
 
-  // Find SCHOLARS block using start/end markers — robust against base64 content
-  const startMarker = "let SCHOLARS = [";
-  const endMarker   = "];\n\n\nlet nextScholId";
-  const altEndMarker = "];\n\nlet nextScholId";
-  const altEndMarker2 = "];\nlet nextScholId";
+  // Find SCHOLARS block by locating the start and the nextScholId line after it
+  const startMarker  = "let SCHOLARS = [";
+  const nextIdMarker = "let nextScholId = ";
 
-  let startIdx = currentHtml.indexOf(startMarker);
-  if(startIdx === -1){ showToast("⚠️ Export failed — SCHOLARS marker not found."); return; }
+  const startIdx = currentHtml.indexOf(startMarker);
+  if(startIdx === -1){ showToast("⚠️ Export failed — SCHOLARS not found."); return; }
 
-  // Find the matching end — try multiple patterns
-  let endIdx = currentHtml.indexOf(endMarker, startIdx);
-  let endLen = endMarker.length;
-  if(endIdx === -1){ endIdx = currentHtml.indexOf(altEndMarker, startIdx); endLen = altEndMarker.length; }
-  if(endIdx === -1){ endIdx = currentHtml.indexOf(altEndMarker2, startIdx); endLen = altEndMarker2.length; }
-  if(endIdx === -1){
-    // Fallback — find "];
-let nextScholId" anywhere after startIdx
-    const searchStr = "let nextScholId";
-    const nIdx = currentHtml.indexOf(searchStr, startIdx);
-    if(nIdx === -1){ showToast("⚠️ Export failed — could not find nextScholId marker."); return; }
-    // Walk back from nIdx to find ];
+  const nextIdIdx = currentHtml.indexOf(nextIdMarker, startIdx);
+  if(nextIdIdx === -1){ showToast("⚠️ Export failed — nextScholId not found."); return; }
 
-    endIdx = currentHtml.lastIndexOf("];", nIdx);
-    endLen = 2;
-  }
+  // Find end of nextScholId line
+  const nextIdEnd = currentHtml.indexOf(";", nextIdIdx) + 1;
 
   const before  = currentHtml.substring(0, startIdx);
-  const after   = currentHtml.substring(endIdx + endLen);
-  const updated = before + "let SCHOLARS = " + scholarsJson + ";
+  const after   = currentHtml.substring(nextIdEnd);
+  const updated = before
+    + "let SCHOLARS = " + scholarsJson + ";\n\n\n"
+    + nextIdMarker + nextId + ";"
+    + after;
 
-let nextScholId = " + nextId + ";" + after;
-
-  if(!updated || updated === currentHtml){
-    showToast("⚠️ Export failed — no changes detected.");
-    return;
-  }
-
-  // Create downloadable file
   const blob = new Blob(["<!DOCTYPE html>\n" + updated], {type:"text/html"});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement("a");
@@ -1236,19 +1217,9 @@ let nextScholId = " + nextId + ";" + after;
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast("✅ HTML exported! Upload this file to GitHub to save changes.");
+  showToast("✅ HTML exported! Upload to GitHub to save changes.");
 }
 
-
-// ============================================================
-// EDIT GRADES (admin only)
-// ============================================================
-let editGradePost = null;
-
-
-// ============================================================
-// DELETE GRADE POST (admin only)
-// ============================================================
 function deleteGrade(key){
   const p = postCache[key]; if(!p){ showToast("⚠️ Could not load grade data."); return; }
   if(!confirm("Delete " + p.name + "'s " + p.quarter + " grades?\n\nThis will clear that quarter from the Google Sheet.")) return;
