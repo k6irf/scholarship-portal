@@ -1186,14 +1186,49 @@ function removeModalPhoto(e){
 function exportHtml(){
   // Serialize current SCHOLARS array with all photos into the source
   const scholarsJson = JSON.stringify(SCHOLARS, null, 2);
+  const nextId       = nextScholId;
   const currentHtml  = document.documentElement.outerHTML;
 
-  // Replace the SCHOLARS array in the source with the current in-memory one
-  const scholarsRegex = /let SCHOLARS = \[[\s\S]*?\];(\s*let nextScholId)/;
-  const updated = currentHtml.replace(scholarsRegex, "let SCHOLARS = " + scholarsJson + ";\n$1");
+  // Find SCHOLARS block using start/end markers — robust against base64 content
+  const startMarker = "let SCHOLARS = [";
+  const endMarker   = "];
+
+
+let nextScholId";
+  const altEndMarker = "];
+
+let nextScholId";
+  const altEndMarker2 = "];
+let nextScholId";
+
+  let startIdx = currentHtml.indexOf(startMarker);
+  if(startIdx === -1){ showToast("⚠️ Export failed — SCHOLARS marker not found."); return; }
+
+  // Find the matching end — try multiple patterns
+  let endIdx = currentHtml.indexOf(endMarker, startIdx);
+  let endLen = endMarker.length;
+  if(endIdx === -1){ endIdx = currentHtml.indexOf(altEndMarker, startIdx); endLen = altEndMarker.length; }
+  if(endIdx === -1){ endIdx = currentHtml.indexOf(altEndMarker2, startIdx); endLen = altEndMarker2.length; }
+  if(endIdx === -1){
+    // Fallback — find "];
+let nextScholId" anywhere after startIdx
+    const searchStr = "let nextScholId";
+    const nIdx = currentHtml.indexOf(searchStr, startIdx);
+    if(nIdx === -1){ showToast("⚠️ Export failed — could not find nextScholId marker."); return; }
+    // Walk back from nIdx to find ];
+
+    endIdx = currentHtml.lastIndexOf("];", nIdx);
+    endLen = 2;
+  }
+
+  const before  = currentHtml.substring(0, startIdx);
+  const after   = currentHtml.substring(endIdx + endLen);
+  const updated = before + "let SCHOLARS = " + scholarsJson + ";
+
+let nextScholId = " + nextId + ";" + after;
 
   if(!updated || updated === currentHtml){
-    showToast("⚠️ Export failed — could not locate SCHOLARS in source.");
+    showToast("⚠️ Export failed — no changes detected.");
     return;
   }
 
