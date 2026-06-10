@@ -231,6 +231,29 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
 .btn-scholar-edit{font-size:11px;padding:3px 10px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:6px;cursor:pointer;font-weight:600;margin-left:6px}
 .btn-scholar-edit:hover{background:#dbeafe}
 .edit-history{font-size:11px;color:#f59e0b;margin-top:2px;font-style:italic}
+
+/* REPORT */
+.rpt-section{margin-bottom:2rem}
+.rpt-section-title{font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,#1e3a5f,#2563eb);padding:10px 16px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:8px}
+.rpt-table{width:100%;border-collapse:collapse;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06);border-radius:0 0 10px 10px;overflow:hidden;font-size:13px}
+.rpt-table th{background:#f0f4f8;color:#374151;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0;white-space:nowrap}
+.rpt-table td{padding:9px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+.rpt-table tr:last-child td{border-bottom:none}
+.rpt-table tr:hover td{background:#fafbfc}
+.rpt-honor{color:#854d0e;font-weight:700}
+.rpt-pass{color:#166534;font-weight:600}
+.rpt-fail{color:#dc2626;font-weight:600}
+.rpt-gwa{font-weight:700;font-size:14px}
+.rpt-subj-list{font-size:11px;color:#64748b;line-height:1.6}
+.rpt-term-block{margin-bottom:8px;padding:6px 8px;background:#f8fafc;border-radius:6px;border-left:3px solid #3b82f6}
+.rpt-term-block.college{border-left-color:#8b5cf6}
+.rpt-empty{text-align:center;padding:2rem;color:#94a3b8;font-size:14px}
+@media print{
+  .topbar,.filters,.form-card,#board-section,#admin-section,button,.btn-topbar{display:none!important}
+  #report-section{display:block!important}
+  .rpt-table{box-shadow:none;border:1px solid #ddd}
+  body{background:#fff}
+}
 </style>
 <script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script><script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
 <body>
@@ -977,7 +1000,7 @@ let SCHOLARS = [
     "photo": "",
     "customPw": ""
   }
-];
+]
 
 
 let nextScholId = 17;
@@ -1058,10 +1081,13 @@ function doLogin(){
     document.getElementById("btn-new").style.display="none";
     document.getElementById("btn-admin-tab").style.display="";
     document.getElementById("btn-export").style.display="";
+    document.getElementById("btn-report-tab").style.display="";
   } else {
     document.getElementById("btn-new").style.display="";
     document.getElementById("btn-admin-tab").style.display="none";
     document.getElementById("btn-export").style.display="none";
+  document.getElementById("btn-report-tab").style.display="none";
+  document.getElementById("report-section").style.display="none";
   }
   loadPosts();
 }
@@ -1077,6 +1103,8 @@ function doLogout(){
   document.getElementById("admin-section").style.display="none";
   document.getElementById("btn-admin-tab").style.display="none";
   document.getElementById("btn-export").style.display="none";
+  document.getElementById("btn-report-tab").style.display="none";
+  document.getElementById("report-section").style.display="none";
   formOpen=false;
 }
 
@@ -1944,6 +1972,191 @@ function saveSubjSetup(){
   closeSubjSetup();
   renderRoster();
   showToast("✅ Subjects saved for "+fullName(SCHOLARS[idx])+"!");
+}
+
+
+// ============================================================
+// REPORT TAB
+// ============================================================
+function showReportPanel(){
+  const isReport = document.getElementById("report-section").style.display === "block";
+  document.getElementById("board-section").style.display  = "none";
+  document.getElementById("admin-section").style.display  = "none";
+  document.getElementById("report-section").style.display = isReport ? "none" : "block";
+  document.getElementById("btn-admin-tab").textContent    = "⚙ Admin";
+  document.getElementById("btn-report-tab").textContent   = isReport ? "📊 Reports" : "📋 Grade Board";
+  if(!isReport){
+    document.getElementById("board-section").style.display = "none";
+    buildReport();
+  } else {
+    document.getElementById("board-section").style.display = "block";
+    document.getElementById("btn-report-tab").textContent  = "📊 Reports";
+  }
+}
+
+function buildReport(){
+  const syearFilter = document.getElementById("rpt-syear").value;
+  const body = document.getElementById("report-body");
+  if(!allPosts.length){ body.innerHTML='<div class="rpt-empty">No grade data available. Load the Grade Board first.</div>'; return; }
+
+  const QTR_ORDER = ["First Quarter","Second Quarter","Third Quarter","Fourth Quarter","1st Semester","2nd Semester"];
+  const LEVELS = [
+    {key:"elem",   label:"Grade School",  icon:"🟢"},
+    {key:"hs",     label:"High School",   icon:"🟡"},
+    {key:"college",label:"College",       icon:"🟣"},
+  ];
+
+  // Group posts by scholar
+  const byScholar = {};
+  allPosts.forEach(p => {
+    if(syearFilter && p.syear !== syearFilter) return;
+    if(!byScholar[p.name]) byScholar[p.name] = {name:p.name, gradeNumber:p.gradeNumber, level:scholarLevelByName(p.name,p.level), quarters:{}};
+    byScholar[p.name].quarters[p.quarter] = {grades:p.grades, gwa:p.gwa, syear:p.syear, editedAt:p.editedAt||""};
+  });
+
+  let html = "";
+  LEVELS.forEach(lvl => {
+    const scholars = Object.values(byScholar).filter(s => s.level === lvl.key);
+    if(!scholars.length) return;
+
+    const isCollege = lvl.key === "college";
+    const terms = isCollege
+      ? ["1st Semester","2nd Semester"]
+      : ["First Quarter","Second Quarter","Third Quarter","Fourth Quarter"];
+
+    // ── SUMMARY TABLE ──
+    html += `<div class="rpt-section">
+      <div class="rpt-section-title">${lvl.icon} ${lvl.label} — Summary${syearFilter?" · "+syearFilter:""}</div>
+      <div style="overflow-x:auto"><table class="rpt-table">
+        <thead><tr>
+          <th>#</th><th>Scholar</th><th>Grade / Year</th>
+          ${terms.map(t=>`<th>${t.replace(" Quarter"," Qtr").replace("st Semester","st Sem").replace("nd Semester","nd Sem")} GWA</th>`).join("")}
+          <th>Final GWA</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+        ${scholars.map((s,i) => {
+          const termGwas = terms.map(t => {
+            const q = s.quarters[t];
+            if(!q) return null;
+            if(isCollege) return parseFloat(calcCollegeGwa(q.grades));
+            const grades = parseGradeStr(q.grades);
+            const vals = Object.values(grades).filter(v=>!isNaN(v));
+            return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+          });
+          const validGwas = termGwas.filter(g=>g!==null);
+          const finalGwa = validGwas.length
+            ? (validGwas.reduce((a,b)=>a+b,0)/validGwas.length).toFixed(2)
+            : "—";
+          const isHonor = isCollege ? parseFloat(finalGwa)<=1.75 : parseFloat(finalGwa)>=90;
+          const isPassed = isCollege ? parseFloat(finalGwa)<=3.0 : parseFloat(finalGwa)>=75;
+          const statusClass = isHonor?"rpt-honor":isPassed?"rpt-pass":"rpt-fail";
+          const statusLabel = isHonor?"🏆 With Honors":isPassed?"✅ Passed":"❌ Failed";
+          return `<tr>
+            <td style="color:#94a3b8">${i+1}</td>
+            <td><strong>${s.name}</strong></td>
+            <td>${s.gradeNumber}</td>
+            ${termGwas.map(g=>g!==null?`<td class="rpt-gwa">${g.toFixed(2)}</td>`:`<td style="color:#cbd5e1">—</td>`).join("")}
+            <td class="rpt-gwa" style="font-size:15px">${finalGwa}</td>
+            <td class="${statusClass}">${statusLabel}</td>
+          </tr>`;
+        }).join("")}
+        </tbody>
+      </table></div>
+    </div>`;
+
+    // ── TERM BREAKDOWN TABLE ──
+    html += `<div class="rpt-section">
+      <div class="rpt-section-title">${lvl.icon} ${lvl.label} — Term Breakdown${syearFilter?" · "+syearFilter:""}</div>
+      <div style="overflow-x:auto"><table class="rpt-table">
+        <thead><tr>
+          <th>Scholar</th><th>Grade</th><th>Term</th><th>School Year</th><th>Subjects & Grades</th><th>GWA</th><th>Edited</th>
+        </tr></thead>
+        <tbody>
+        ${scholars.flatMap(s =>
+          terms.filter(t=>s.quarters[t]).map(t => {
+            const q = s.quarters[t];
+            const isCol = q.grades && q.grades.includes("|");
+            let subjList = "";
+            if(isCol){
+              subjList = parseCollegeGrades(q.grades).map(g=>`${g.name}: <strong>${g.grade!==null?g.grade.toFixed(2):"—"}</strong> (${g.units}u)`).join(" · ");
+            } else {
+              subjList = Object.entries(parseGradeStr(q.grades)).map(([k,v])=>`${k}: <strong>${v}</strong>`).join(" · ");
+            }
+            const gwaDisp = isCol ? calcCollegeGwa(q.grades) : (()=>{
+              const vals=Object.values(parseGradeStr(q.grades)).filter(v=>!isNaN(v));
+              return vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2):"—";
+            })();
+            const isHon = isCol?parseFloat(gwaDisp)<=1.75:parseFloat(gwaDisp)>=90;
+            const isPas = isCol?parseFloat(gwaDisp)<=3.0:parseFloat(gwaDisp)>=75;
+            const gwaCls = isHon?"rpt-honor":isPas?"rpt-pass":"rpt-fail";
+            return `<tr>
+              <td><strong>${s.name}</strong></td>
+              <td>${s.gradeNumber}</td>
+              <td><span class="badge ${isCol?"college":s.level}">${t}</span></td>
+              <td>${q.syear||"—"}</td>
+              <td class="rpt-subj-list">${subjList}</td>
+              <td class="rpt-gwa ${gwaCls}">${gwaDisp}</td>
+              <td style="font-size:11px;color:#f59e0b">${q.editedAt||""}</td>
+            </tr>`;
+          })
+        ).join("")}
+        </tbody>
+      </table></div>
+    </div>`;
+  });
+
+  body.innerHTML = html || '<div class="rpt-empty">No posts match the selected filter.</div>';
+}
+
+function printReport(){
+  // Hide everything except report section then print
+  document.getElementById("board-section").style.display="none";
+  document.getElementById("admin-section").style.display="none";
+  window.print();
+  // Restore after print
+  setTimeout(()=>{
+    document.getElementById("report-section").style.display="block";
+  }, 500);
+}
+
+function exportReportCSV(){
+  const syearFilter = document.getElementById("rpt-syear").value;
+  const QTR_ORDER = ["First Quarter","Second Quarter","Third Quarter","Fourth Quarter","1st Semester","2nd Semester"];
+  const rows = [["Scholar","Grade/Year","Level","Term","School Year","GWA","Status","Subjects","Edited At"]];
+
+  const byScholar = {};
+  allPosts.forEach(p => {
+    if(syearFilter && p.syear !== syearFilter) return;
+    if(!byScholar[p.name]) byScholar[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:scholarLevelByName(p.name,p.level),quarters:{}};
+    byScholar[p.name].quarters[p.quarter]={grades:p.grades,syear:p.syear,editedAt:p.editedAt||""};
+  });
+
+  Object.values(byScholar).forEach(s => {
+    QTR_ORDER.filter(t=>s.quarters[t]).forEach(t => {
+      const q = s.quarters[t];
+      const isCol = q.grades && q.grades.includes("|");
+      const gwa = isCol ? calcCollegeGwa(q.grades) : (()=>{
+        const vals=Object.values(parseGradeStr(q.grades)).filter(v=>!isNaN(v));
+        return vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2):"—";
+      })();
+      const isHon = isCol?parseFloat(gwa)<=1.75:parseFloat(gwa)>=90;
+      const isPas = isCol?parseFloat(gwa)<=3.0:parseFloat(gwa)>=75;
+      const status = isHon?"With Honors":isPas?"Passed":"Failed";
+      const subjStr = isCol
+        ? parseCollegeGrades(q.grades).map(g=>`${g.name}:${g.grade!==null?g.grade.toFixed(2):"—"}(${g.units}u)`).join("; ")
+        : Object.entries(parseGradeStr(q.grades)).map(([k,v])=>`${k}:${v}`).join("; ");
+      rows.push([s.name, s.gradeNumber, s.level, t, q.syear||"", gwa, status, subjStr, q.editedAt||""]);
+    });
+  });
+
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv"});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href=url; a.download="SMSP_Grades_"+(syearFilter||"All")+"_"+new Date().toISOString().slice(0,10)+".csv";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("✅ CSV exported!");
 }
 
 function showToast(msg){
