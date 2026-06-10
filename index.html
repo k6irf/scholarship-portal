@@ -287,6 +287,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
     <div class="topbar-right">
       <span class="user-pill" id="user-pill">Admin</span>
       <button class="btn-topbar" id="btn-admin-tab" onclick="showAdminPanel()" style="">📋 Grade Board</button>
+      <button class="btn-topbar" id="btn-report-tab" onclick="showReportPanel()" style="display:none">📊 Reports</button>
       <button class="btn-topbar" id="btn-export" onclick="exportHtml()" style="" title="Save updated HTML with all photos baked in">💾 Save &amp; Export</button>
       <button class="btn-topbar" onclick="doLogout()">Sign out</button>
     </div>
@@ -814,6 +815,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
       <button class="btn-save" onclick="saveSubjSetup()">💾 Save Subjects</button>
     </div>
   </div>
+</div>
+
+<!-- REPORTS SECTION (admin only) -->
+<div id="report-section" style="display:none">
+  <div class="admin-toolbar" style="margin-bottom:1.2rem;flex-wrap:wrap;gap:8px">
+    <h2 style="margin:0;font-size:18px;font-weight:700;color:#1e3a5f">📊 Reports</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <label style="font-size:13px;color:#64748b">School Year:</label>
+      <select id="rpt-syear" onchange="buildReport()" style="padding:6px 10px;border-radius:8px;border:1px solid #e2e8f0;font-size:13px">
+        <option value="">All Years</option>
+      </select>
+      <button class="btn-new" onclick="printReport()" style="background:#64748b;padding:7px 14px;font-size:13px">🖨️ Print</button>
+      <button class="btn-new" onclick="exportReportCSV()" style="background:#059669;padding:7px 14px;font-size:13px">📥 Export CSV</button>
+    </div>
+  </div>
+  <div id="report-body"></div>
 </div>
 
 <div class="toast" id="toast">✅ Scholar added!</div>
@@ -1986,6 +2003,12 @@ function showReportPanel(){
   document.getElementById("btn-admin-tab").textContent    = "⚙ Admin";
   document.getElementById("btn-report-tab").textContent   = isReport ? "📊 Reports" : "📋 Grade Board";
   if(!isReport){
+    // Populate school year filter
+    const sel = document.getElementById("rpt-syear");
+    const years = [...new Set(allPosts.map(p=>p.syear).filter(Boolean))].sort().reverse();
+    const curVal = sel.value;
+    sel.innerHTML = '<option value="">All Years</option>' + years.map(y=>`<option value="${y}">${y}</option>`).join("");
+    if(curVal) sel.value = curVal;
     document.getElementById("board-section").style.display = "none";
     buildReport();
   } else {
