@@ -1620,8 +1620,18 @@ function deleteGrade(key){
   });
 }
 
+function openScholarEdit(key){
+  const p=postCache[key];
+  if(!p){ showToast("⚠️ Could not load grade data."); return; }
+  openEditGrade(key);
+  document.getElementById("edit-grade-modal").dataset.scholarEdit="1";
+  document.querySelector("#edit-grade-modal h3").textContent="✏️ Edit My Grades";
+}
+
 function openEditGrade(key){
   const p = postCache[key]; if(!p){ showToast("⚠️ Could not load grade data."); return; }
+  document.getElementById("edit-grade-modal").dataset.scholarEdit="0";
+  document.querySelector("#edit-grade-modal h3").textContent="✏️ Edit Grades";
   editGradePost = p;
   document.getElementById("eg-subtitle").textContent = p.name + " · " + p.quarter + " · " + (p.syear||"");
   document.getElementById("eg-quarter").value = p.quarter;
