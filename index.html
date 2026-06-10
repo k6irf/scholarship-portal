@@ -1410,7 +1410,10 @@ function renderPosts(){
             <span class="honor-badge ${honorClass}">${honorLabel}</span></div>
           ${noteHtml}
           <div style="display:flex;align-items:center;margin-top:8px">
-            <div class="post-ts" style="flex:1">Posted: ${p.timestamp||""}</div>
+            <div style="flex:1">
+              <div class="post-ts">Posted: ${p.timestamp||""}</div>
+              ${p.editedAt ? `<div class="edit-history">✏️ Edited: ${p.editedAt}</div>` : ""}
+            </div>
             ${(()=>{
               const idx=p.name+"||"+p.quarter; postCache[idx]=p;
               const isOwn=currentUser&&!currentUser.isAdmin&&normalizeName(currentUser.name)===normalizeName(p.name);
