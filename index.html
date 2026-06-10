@@ -229,6 +229,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
 .subj-setup-header{padding:1.25rem 1.5rem 1rem;border-bottom:1.5px solid #e2e8f0;flex-shrink:0}
 .subj-setup-body{padding:1.25rem 1.5rem;overflow-y:auto;flex:1}
 .subj-setup-footer{padding:1rem 1.5rem;border-top:1px solid #f1f5f9;flex-shrink:0;display:flex;justify-content:flex-end;gap:8px;background:#fff;border-radius:0 0 16px 16px}
+
+.btn-scholar-edit{font-size:11px;padding:3px 10px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:6px;cursor:pointer;font-weight:600;margin-left:6px}
+.btn-scholar-edit:hover{background:#dbeafe}
+.edit-history{font-size:11px;color:#f59e0b;margin-top:3px;font-style:italic}
 </style>
 </head>
 <body>
@@ -1334,8 +1338,24 @@ function deleteGrade(key){
   });
 }
 
+
+// ============================================================
+// SCHOLAR SELF-EDIT (own posts only)
+// ============================================================
+function openScholarEdit(key){
+  // Reuse the admin edit grade modal — same UI, just tagged as scholar edit
+  const p = postCache[key];
+  if(!p){ showToast("⚠️ Could not load grade data."); return; }
+  openEditGrade(key);
+  // Mark modal as scholar self-edit
+  document.getElementById("edit-grade-modal").dataset.scholarEdit = "1";
+  document.querySelector("#edit-grade-modal h3").textContent = "✏️ Edit My Grades";
+}
+
 function openEditGrade(key){
   const p = postCache[key]; if(!p){ showToast("⚠️ Could not load grade data."); return; }
+  document.getElementById("edit-grade-modal").dataset.scholarEdit = "0";
+  document.querySelector("#edit-grade-modal h3").textContent = "✏️ Edit Grades";
   editGradePost = p;
   document.getElementById("eg-subtitle").textContent = p.name + " · " + p.quarter + " · " + (p.syear||"");
   document.getElementById("eg-quarter").value = p.quarter;
@@ -1407,6 +1427,8 @@ function saveEditGrade(){
   const btn = document.querySelector("#edit-grade-modal .btn-save");
   btn.disabled=true; btn.textContent="Saving...";
 
+  const isScholarEdit = document.getElementById("edit-grade-modal").dataset.scholarEdit === "1";
+  const editedAt = new Date().toLocaleString("en-PH", {timeZone:"Asia/Manila",month:"short",day:"numeric",year:"numeric",hour:"2-digit",minute:"2-digit"});
   const params = new URLSearchParams({
     action:      "submit",
     name:        editGradePost.name,
@@ -1416,7 +1438,8 @@ function saveEditGrade(){
     gwa:         gwa,
     note:        note,
     syear:       syear,
-    level:       scholarLevelByName(editGradePost.name, editGradePost.level)
+    level:       scholarLevelByName(editGradePost.name, editGradePost.level),
+    editedAt:    editedAt
   });
 
   jsonpCall(APPS_SCRIPT_URL+"?"+params.toString(), function(e2,res){
