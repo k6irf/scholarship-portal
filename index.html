@@ -1449,6 +1449,13 @@ function setFilter(el,f){
   el.classList.add("active"); activeFilter=f; renderPosts(); renderSummary();
 }
 
+// Normalize legacy "First/Second/Third Quarter" to HS term labels
+function normalizeHsTerm(quarter, level){
+  if(level !== "hs") return quarter;
+  const map = {"First Quarter":"Term 1","Second Quarter":"Term 2","Third Quarter":"Term 3"};
+  return map[quarter] || quarter;
+}
+
 function renderPosts(){
   let posts=allPosts;
   if(activeFilter==="elem") posts=allPosts.filter(p=>scholarLevelByName(p.name,p.level)==="elem");
@@ -1519,7 +1526,7 @@ function renderPosts(){
         <div class="post-card-body">
           <div class="post-header">
             ${avatarHtml(p.name, photo)}
-            <div class="post-meta"><h4>${p.name} ${lvlBadge} <span class="badge qtr">${p.quarter}</span></h4><p>${p.gradeNumber} · ${p.syear||""}</p></div>
+            <div class="post-meta"><h4>${p.name} ${lvlBadge} <span class="badge qtr">${normalizeHsTerm(p.quarter, lvl)}</span></h4><p>${p.gradeNumber} · ${p.syear||""}</p></div>
           </div>
           ${isCollege ? collegeTable : `<div class="grade-chips">${chips}</div>`}
           <div class="gwa-row"><span style="font-size:13px;color:#64748b">GWA:</span><span class="gwa-val">${gwa}</span>
@@ -1555,8 +1562,10 @@ function renderSummary(){
   allPosts.forEach(p=>{
     if(!byStudent[p.name]) byStudent[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:p.level||"elem",quarters:{},rawPosts:{}};
     // Store both parsed (for K-12) and raw string (for college detection)
-    byStudent[p.name].quarters[p.quarter]=parseGradeStr(p.grades);
-    byStudent[p.name].rawPosts[p.quarter]=p.grades;
+    // Normalise legacy HS quarter names so old "First Quarter" maps to "Term 1" etc.
+    const normQ = normalizeHsTerm(p.quarter, p.level || "elem");
+    byStudent[p.name].quarters[normQ]=parseGradeStr(p.grades);
+    byStudent[p.name].rawPosts[normQ]=p.grades;
   });
   // Apply same level/quarter filter as Grade Board
   let students=Object.values(byStudent);
