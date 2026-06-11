@@ -311,6 +311,62 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
 .rpt-term-block{margin-bottom:8px;padding:6px 8px;background:#f8fafc;border-radius:6px;border-left:3px solid #3b82f6}
 .rpt-term-block.college{border-left-color:#8b5cf6}
 .rpt-empty{text-align:center;padding:2rem;color:#94a3b8;font-size:14px}
+/* ── Facebook Post Card ──────────────────────── */
+.fb-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;align-items:center;justify-content:center;padding:1rem}
+.fb-modal.open{display:flex}
+.fb-box{background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.fb-header{padding:1.1rem 1.4rem .8rem;border-bottom:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.fb-header h3{font-size:15px;font-weight:700;color:#1e3a5f;margin:0}
+.fb-close{background:none;border:none;font-size:18px;cursor:pointer;color:#64748b}
+.fb-body{padding:1.2rem 1.4rem}
+/* The actual card that will be "screenshotted" */
+#fb-card-render{background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);border-radius:14px;padding:1.5rem;color:#fff;font-family:"Segoe UI",system-ui,sans-serif;min-height:300px}
+.fb-card-logo{display:flex;align-items:center;gap:10px;margin-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:.8rem}
+.fb-card-logo span{font-size:13px;font-weight:700;letter-spacing:.3px;opacity:.9}
+.fb-card-title{font-size:17px;font-weight:800;margin-bottom:.25rem}
+.fb-card-sub{font-size:12px;opacity:.75;margin-bottom:1rem}
+.fb-scholar-row{background:rgba(255,255,255,.12);border-radius:10px;padding:.6rem .9rem;margin-bottom:.5rem;display:flex;align-items:center;gap:12px}
+.fb-scholar-row .fb-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(255,255,255,.5)}
+.fb-scholar-row .fb-avatar-ph{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.fb-scholar-name{font-size:13px;font-weight:700;flex:1}
+.fb-scholar-meta{font-size:11px;opacity:.75}
+.fb-gwa-pill{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;flex-shrink:0}
+.fb-gwa-pill.honor{background:#fbbf24;color:#1e3a5f}
+.fb-footer-note{font-size:11px;opacity:.6;text-align:center;margin-top:1rem;border-top:1px solid rgba(255,255,255,.2);padding-top:.7rem}
+.fb-actions{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
+.fb-syear-label{font-size:12px;color:#64748b;margin-bottom:6px}
+.fb-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.fb-filter-btn{padding:4px 12px;border-radius:16px;border:1.5px solid #e2e8f0;background:#fff;font-size:12px;cursor:pointer;color:#64748b}
+.fb-filter-btn.active{background:#2563eb;border-color:#2563eb;color:#fff}
+
+/* ── PDF / Sponsor Report ────────────────────── */
+.pdf-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;align-items:center;justify-content:center;padding:1rem}
+.pdf-modal.open{display:flex}
+.pdf-box{background:#fff;border-radius:16px;width:100%;max-width:740px;max-height:92vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.pdf-header{padding:1.1rem 1.4rem .8rem;border-bottom:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.pdf-header h3{font-size:15px;font-weight:700;color:#1e3a5f;margin:0}
+.pdf-close{background:none;border:none;font-size:18px;cursor:pointer;color:#64748b}
+.pdf-body{padding:1.4rem}
+/* preview panel */
+#pdf-preview{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.2rem;margin-bottom:1rem}
+#pdf-preview .doc-title{font-size:20px;font-weight:800;color:#1e3a5f;text-align:center;margin-bottom:2px}
+#pdf-preview .doc-sub{font-size:12px;color:#64748b;text-align:center;margin-bottom:1rem}
+#pdf-preview .doc-section{margin-bottom:1.2rem}
+#pdf-preview .doc-section h4{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#1e3a5f,#2563eb);padding:5px 10px;border-radius:6px 6px 0 0;margin:0}
+#pdf-preview table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:0 0 6px 6px;overflow:hidden}
+#pdf-preview table th{background:#f0f4f8;color:#374151;padding:6px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+#pdf-preview table td{padding:6px 10px;border-bottom:1px solid #f1f5f9;color:#1a202c;vertical-align:middle}
+#pdf-preview .doc-meta{display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;margin-bottom:.8rem}
+#pdf-preview .honor-tag{color:#854d0e;font-weight:700}
+#pdf-preview .pass-tag{color:#166534;font-weight:600}
+#pdf-preview .fail-tag{color:#dc2626;font-weight:600}
+#pdf-preview .stat-row{display:flex;gap:12px;margin-bottom:.8rem;flex-wrap:wrap}
+#pdf-preview .stat-box{flex:1;min-width:90px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;text-align:center}
+#pdf-preview .stat-box .sb-val{font-size:20px;font-weight:800;color:#1e3a5f}
+#pdf-preview .stat-box .sb-lbl{font-size:10px;color:#94a3b8;text-transform:uppercase;margin-top:2px}
+#pdf-preview .photo-cell img{width:32px;height:32px;border-radius:50%;object-fit:cover}
+#pdf-preview .photo-cell .ph{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+
 @media print{
   .topbar,.filters,.form-card,#board-section,#admin-section,button,.btn-topbar{display:none!important}
   #report-section{display:block!important}
@@ -888,9 +944,58 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
       </select>
       <button class="btn-new" onclick="printReport()" style="background:#64748b;padding:7px 14px;font-size:13px">🖨️ Print</button>
       <button class="btn-new" onclick="exportReportCSV()" style="background:#059669;padding:7px 14px;font-size:13px">📥 Export CSV</button>
+      <button class="btn-new" onclick="openFbModal()" style="background:#1877f2;padding:7px 14px;font-size:13px">📣 FB Post Card</button>
+      <button class="btn-new" onclick="openPdfModal()" style="background:#7c3aed;padding:7px 14px;font-size:13px">📄 Sponsor PDF</button>
     </div>
   </div>
   <div id="report-body"></div>
+</div>
+
+<!-- ════ FACEBOOK POST CARD MODAL ════ -->
+<div class="fb-modal" id="fb-modal">
+  <div class="fb-box">
+    <div class="fb-header">
+      <h3>📣 Facebook Post Card</h3>
+      <button class="fb-close" onclick="closeFbModal()">✕</button>
+    </div>
+    <div class="fb-body">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:.6rem;flex-wrap:wrap">
+        <label style="font-size:12px;color:#64748b">School Year:</label>
+        <select id="fb-syear" onchange="renderFbCard()" style="padding:4px 8px;border-radius:7px;border:1px solid #e2e8f0;font-size:12px"></select>
+        <span style="font-size:12px;color:#64748b;margin-left:4px">Show:</span>
+      </div>
+      <div class="fb-filter-row" id="fb-filter-row">
+        <button class="fb-filter-btn active" onclick="fbSetFilter(this,'all')">All</button>
+        <button class="fb-filter-btn" onclick="fbSetFilter(this,'hs')">High School</button>
+        <button class="fb-filter-btn" onclick="fbSetFilter(this,'college')">College</button>
+        <button class="fb-filter-btn" onclick="fbSetFilter(this,'honor')">🏆 With Honors</button>
+      </div>
+      <div id="fb-card-render"></div>
+      <div class="fb-actions">
+        <button class="btn-new" onclick="copyFbCard()" style="background:#1877f2;font-size:13px;padding:8px 16px">📋 Copy Image Caption</button>
+        <button class="btn-new" onclick="printFbCard()" style="background:#64748b;font-size:13px;padding:8px 16px">🖨️ Print / Save as Image</button>
+      </div>
+      <p style="font-size:11px;color:#94a3b8;margin-top:8px">💡 Tip: Use "Print → Save as PDF" or take a screenshot of the card above to post on Facebook.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PDF SPONSOR REPORT MODAL ════ -->
+<div class="pdf-modal" id="pdf-modal">
+  <div class="pdf-box">
+    <div class="pdf-header">
+      <h3>📄 Sponsor Report (PDF)</h3>
+      <button class="pdf-close" onclick="closePdfModal()">✕</button>
+    </div>
+    <div class="pdf-body">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem;flex-wrap:wrap">
+        <label style="font-size:12px;color:#64748b">School Year:</label>
+        <select id="pdf-syear" onchange="renderPdfPreview()" style="padding:4px 8px;border-radius:7px;border:1px solid #e2e8f0;font-size:12px"></select>
+        <button class="btn-new" onclick="printPdfReport()" style="background:#059669;font-size:13px;padding:7px 16px">🖨️ Print / Save PDF</button>
+      </div>
+      <div id="pdf-preview"></div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast">✅ Scholar added!</div>
@@ -2336,6 +2441,364 @@ function showToast(msg){
 document.getElementById("scholar-modal").addEventListener("click",function(e){
   // disabled: if(e.target===this) closeModal();
 });
+
+// ============================================================
+// FACEBOOK POST CARD
+// ============================================================
+let fbFilter = "all";
+
+function openFbModal(){
+  const sel = document.getElementById("fb-syear");
+  sel.innerHTML = '<option value="">All Years</option>';
+  const years = [...new Set(allPosts.map(p=>p.syear).filter(Boolean))].sort().reverse();
+  years.forEach(y=>{ const o=document.createElement("option"); o.value=o.textContent=y; sel.appendChild(o); });
+  renderFbCard();
+  document.getElementById("fb-modal").classList.add("open");
+}
+function closeFbModal(){ document.getElementById("fb-modal").classList.remove("open"); }
+
+function fbSetFilter(el, f){
+  document.querySelectorAll(".fb-filter-btn").forEach(b=>b.classList.remove("active"));
+  el.classList.add("active");
+  fbFilter = f;
+  renderFbCard();
+}
+
+function renderFbCard(){
+  const syear = document.getElementById("fb-syear").value;
+  const QTR_ORDER_HS=["Term 1","Term 2","Term 3"];
+  const QTR_ORDER_COL=["1st Semester","2nd Semester"];
+  const QTR_ORDER_ELEM=["First Quarter","Second Quarter","Third Quarter","Fourth Quarter"];
+
+  // Build scholar summaries
+  const byScholar = {};
+  allPosts.forEach(p=>{
+    if(syear && p.syear!==syear) return;
+    const lvl = scholarLevelByName(p.name, p.level);
+    if(!byScholar[p.name]) byScholar[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:lvl,quarters:{}};
+    const normQ = normalizeHsTerm(p.quarter, lvl);
+    byScholar[p.name].quarters[normQ]={grades:p.grades};
+  });
+
+  let scholars = Object.values(byScholar);
+  if(fbFilter==="hs") scholars=scholars.filter(s=>s.level==="hs");
+  else if(fbFilter==="college") scholars=scholars.filter(s=>s.level==="college");
+
+  // Compute final GWA per scholar
+  scholars = scholars.map(s=>{
+    const isCol=s.level==="college";
+    const isHS=s.level==="hs";
+    const order=isCol?QTR_ORDER_COL:isHS?QTR_ORDER_HS:QTR_ORDER_ELEM;
+    const submitted=order.filter(q=>s.quarters[q]);
+    const gwas=submitted.map(q=>{
+      const qd=s.quarters[q];
+      if(isCol) return parseFloat(calcCollegeGwa(qd.grades));
+      const v=Object.values(parseGradeStr(qd.grades)).filter(v=>!isNaN(v));
+      return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;
+    }).filter(g=>g!==null);
+    const finalGwa=gwas.length?gwas.reduce((a,b)=>a+b,0)/gwas.length:null;
+    const isHonor=finalGwa!==null&&(isCol?finalGwa<=1.75:finalGwa>=90);
+    return {...s, finalGwa, isHonor, termsDone:submitted.length, totalTerms:isCol?2:isHS?3:4};
+  });
+
+  if(fbFilter==="honor") scholars=scholars.filter(s=>s.isHonor);
+  scholars.sort((a,b)=>{
+    if(a.isHonor!==b.isHonor) return a.isHonor?-1:1;
+    if(a.finalGwa!==null&&b.finalGwa!==null){
+      const ac=a.level==="college",bc=b.level==="college";
+      if(ac&&bc) return a.finalGwa-b.finalGwa;
+      if(!ac&&!bc) return b.finalGwa-a.finalGwa;
+    }
+    return 0;
+  });
+
+  const honorCount=scholars.filter(s=>s.isHonor).length;
+  const syearLabel=syear||"2026–2027";
+  const filterLabel=fbFilter==="hs"?"High School Scholars":fbFilter==="college"?"College Scholars":fbFilter==="honor"?"With Honors":("All Scholars");
+
+  let rows="";
+  scholars.forEach(s=>{
+    const photo=scholarPhotoByName(s.name);
+    const avatarEl=photo
+      ? `<img class="fb-avatar" src="${photo}" alt="${s.name}">`
+      : `<div class="fb-avatar-ph" style="background:${getAvatarColor(s.name)}">${getInitials(s.name)}</div>`;
+    const isCol=s.level==="college";
+    const gwaStr=s.finalGwa!==null?s.finalGwa.toFixed(2):"—";
+    const pillCls=s.isHonor?"honor":"";
+    const honorStar=s.isHonor?"🏆 ":"";
+    const lvlTag=s.level==="hs"?"HS":s.level==="college"?"College":"Elem";
+    rows+=`<div class="fb-scholar-row">
+      ${avatarEl}
+      <div style="flex:1;min-width:0">
+        <div class="fb-scholar-name">${honorStar}${s.name}</div>
+        <div class="fb-scholar-meta">${s.gradeNumber} · ${lvlTag} · ${s.termsDone}/${s.totalTerms} terms</div>
+      </div>
+      <div class="fb-gwa-pill ${pillCls}">GWA ${gwaStr}</div>
+    </div>`;
+  });
+
+  if(!rows) rows=`<div style="color:rgba(255,255,255,.6);text-align:center;padding:1.5rem;font-size:13px">No grade data for this selection.</div>`;
+
+  document.getElementById("fb-card-render").innerHTML=`
+    <div id="fb-card-render" style="background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);border-radius:14px;padding:1.5rem;color:#fff;font-family:'Segoe UI',system-ui,sans-serif">
+      <div class="fb-card-logo">
+        <div style="width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🎓</div>
+        <span>SMSP · Social Media Scholarship Program</span>
+      </div>
+      <div class="fb-card-title">Scholar Grade Update — ${syearLabel}</div>
+      <div class="fb-card-sub">${filterLabel} · ${scholars.length} scholar${scholars.length!==1?"s":""} · ${honorCount} with honors</div>
+      ${rows}
+      <div class="fb-footer-note">🌟 Congratulations to our scholars! Keep up the great work!<br>#SMSP #Scholarship #ScholarUpdate</div>
+    </div>`;
+}
+
+function copyFbCard(){
+  const syear = document.getElementById("fb-syear").value||"2026-2027";
+  const QTR_ORDER_HS=["Term 1","Term 2","Term 3"];
+  const QTR_ORDER_COL=["1st Semester","2nd Semester"];
+  const QTR_ORDER_ELEM=["First Quarter","Second Quarter","Third Quarter","Fourth Quarter"];
+  const byScholar={};
+  allPosts.forEach(p=>{
+    if(syear && p.syear!==syear) return;
+    const lvl=scholarLevelByName(p.name,p.level);
+    if(!byScholar[p.name]) byScholar[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:lvl,quarters:{}};
+    const normQ=normalizeHsTerm(p.quarter,lvl);
+    byScholar[p.name].quarters[normQ]={grades:p.grades};
+  });
+  let lines=["📚 SMSP Scholar Grade Update — "+syear,""];
+  let honors=[];
+  Object.values(byScholar).forEach(s=>{
+    const isCol=s.level==="college";
+    const isHS=s.level==="hs";
+    const order=isCol?QTR_ORDER_COL:isHS?QTR_ORDER_HS:QTR_ORDER_ELEM;
+    const submitted=order.filter(q=>s.quarters[q]);
+    const gwas=submitted.map(q=>{
+      const qd=s.quarters[q];
+      if(isCol) return parseFloat(calcCollegeGwa(qd.grades));
+      const v=Object.values(parseGradeStr(qd.grades)).filter(v=>!isNaN(v));
+      return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;
+    }).filter(g=>g!==null);
+    const fg=gwas.length?gwas.reduce((a,b)=>a+b,0)/gwas.length:null;
+    const isHonor=fg!==null&&(isCol?fg<=1.75:fg>=90);
+    const gwaStr=fg!==null?fg.toFixed(2):"—";
+    const star=isHonor?"🏆 ":"✅ ";
+    lines.push(star+s.name+" ("+s.gradeNumber+") — GWA: "+gwaStr+(isHonor?" WITH HONORS":""));
+    if(isHonor) honors.push(s.name);
+  });
+  if(honors.length){
+    lines.push("");
+    lines.push("🎉 Congratulations to our Scholars With Honors:");
+    honors.forEach(n=>lines.push("  ★ "+n));
+  }
+  lines.push("");
+  lines.push("Keep striving for excellence! 💪");
+  lines.push("#SMSP #Scholarship #ScholarUpdate #WithHonors");
+  navigator.clipboard.writeText(lines.join("
+")).then(()=>showToast("✅ Caption copied to clipboard!")).catch(()=>showToast("⚠️ Could not copy. Try manually selecting the text."));
+}
+
+function printFbCard(){
+  const cardHtml = document.getElementById("fb-card-render").innerHTML;
+  const w = window.open("","_blank","width=600,height=700");
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>SMSP FB Post Card</title>
+  <style>
+    body{margin:0;padding:20px;background:#f0f4f8;font-family:"Segoe UI",system-ui,sans-serif;display:flex;justify-content:center}
+    .fb-card-logo{display:flex;align-items:center;gap:10px;margin-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:.8rem}
+    .fb-card-logo span{font-size:13px;font-weight:700;letter-spacing:.3px;opacity:.9}
+    .fb-scholar-row{background:rgba(255,255,255,.12);border-radius:10px;padding:.6rem .9rem;margin-bottom:.5rem;display:flex;align-items:center;gap:12px}
+    .fb-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.5)}
+    .fb-avatar-ph{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .fb-scholar-name{font-size:13px;font-weight:700;flex:1}
+    .fb-scholar-meta{font-size:11px;opacity:.75}
+    .fb-gwa-pill{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
+    .fb-gwa-pill.honor{background:#fbbf24;color:#1e3a5f}
+    .fb-footer-note{font-size:11px;opacity:.6;text-align:center;margin-top:1rem;border-top:1px solid rgba(255,255,255,.2);padding-top:.7rem}
+    @media print{body{background:#fff}@page{margin:.5cm}}
+  </style></head><body>${cardHtml}</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(), 600);
+}
+
+// ============================================================
+// PDF SPONSOR REPORT
+// ============================================================
+function openPdfModal(){
+  const sel=document.getElementById("pdf-syear");
+  sel.innerHTML='<option value="">All Years</option>';
+  const years=[...new Set(allPosts.map(p=>p.syear).filter(Boolean))].sort().reverse();
+  years.forEach(y=>{const o=document.createElement("option");o.value=o.textContent=y;sel.appendChild(o);});
+  renderPdfPreview();
+  document.getElementById("pdf-modal").classList.add("open");
+}
+function closePdfModal(){document.getElementById("pdf-modal").classList.remove("open");}
+
+function renderPdfPreview(){
+  const syear=document.getElementById("pdf-syear").value;
+  const QTR_ORDER_HS=["Term 1","Term 2","Term 3"];
+  const QTR_ORDER_COL=["1st Semester","2nd Semester"];
+  const QTR_ORDER_ELEM=["First Quarter","Second Quarter","Third Quarter","Fourth Quarter"];
+  const LEVELS=[{key:"hs",label:"High School",color:"#f59e0b"},{key:"college",label:"College",color:"#8b5cf6"},{key:"elem",label:"Grade School",color:"#22c55e"}];
+
+  const byScholar={};
+  allPosts.forEach(p=>{
+    if(syear&&p.syear!==syear) return;
+    const lvl=scholarLevelByName(p.name,p.level);
+    if(!byScholar[p.name]) byScholar[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:lvl,school:scholarByName(p.name)?.school||"",quarters:{}};
+    const normQ=normalizeHsTerm(p.quarter,lvl);
+    byScholar[p.name].quarters[normQ]={grades:p.grades,syear:p.syear};
+  });
+
+  // Statistics
+  const allScholars=Object.values(byScholar);
+  const totalScholars=allScholars.length;
+  const honorCount=allScholars.filter(s=>{
+    const isCol=s.level==="college";
+    const isHS=s.level==="hs";
+    const order=isCol?QTR_ORDER_COL:isHS?QTR_ORDER_HS:QTR_ORDER_ELEM;
+    const gwas=order.filter(q=>s.quarters[q]).map(q=>{
+      const qd=s.quarters[q];
+      if(isCol) return parseFloat(calcCollegeGwa(qd.grades));
+      const v=Object.values(parseGradeStr(qd.grades)).filter(v=>!isNaN(v));
+      return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;
+    }).filter(g=>g!==null);
+    const fg=gwas.length?gwas.reduce((a,b)=>a+b,0)/gwas.length:null;
+    return fg!==null&&(isCol?fg<=1.75:fg>=90);
+  }).length;
+
+  const dateStr=new Date().toLocaleDateString("en-PH",{year:"numeric",month:"long",day:"numeric"});
+  const syearLabel=syear||"All Years";
+
+  // Stat boxes
+  const hsCount=allScholars.filter(s=>s.level==="hs").length;
+  const colCount=allScholars.filter(s=>s.level==="college").length;
+  let html=`
+  <div class="doc-title">📋 SMSP Scholar Performance Report</div>
+  <div class="doc-sub">Social Media Scholarship Program &nbsp;·&nbsp; School Year: ${syearLabel} &nbsp;·&nbsp; Generated: ${dateStr}</div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="sb-val">${totalScholars}</div><div class="sb-lbl">Total Scholars</div></div>
+    <div class="stat-box"><div class="sb-val">${hsCount}</div><div class="sb-lbl">High School</div></div>
+    <div class="stat-box"><div class="sb-val">${colCount}</div><div class="sb-lbl">College</div></div>
+    <div class="stat-box" style="border-color:#fbbf24"><div class="sb-val" style="color:#854d0e">${honorCount}</div><div class="sb-lbl">With Honors</div></div>
+  </div>`;
+
+  LEVELS.forEach(lvl=>{
+    const scholars=allScholars.filter(s=>s.level===lvl.key);
+    if(!scholars.length) return;
+    const isCol=lvl.key==="college";
+    const isHS=lvl.key==="hs";
+    const order=isCol?QTR_ORDER_COL:isHS?QTR_ORDER_HS:QTR_ORDER_ELEM;
+    const termHeaders=order.map(t=>`<th>${t.replace(" Quarter"," Qtr").replace("1st Semester","1st Sem").replace("2nd Semester","2nd Sem")} GWA</th>`).join("");
+
+    const rows=scholars.map((s,i)=>{
+      const photo=scholarPhotoByName(s.name);
+      const avatarEl=photo?`<img src="${photo}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle">`:`<span class="ph" style="background:${getAvatarColor(s.name)}">${getInitials(s.name)}</span>`;
+      const gwas=order.map(q=>{
+        const qd=s.quarters[q];
+        if(!qd) return null;
+        if(isCol) return parseFloat(calcCollegeGwa(qd.grades));
+        const v=Object.values(parseGradeStr(qd.grades)).filter(v=>!isNaN(v));
+        return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;
+      });
+      const validGwas=gwas.filter(g=>g!==null);
+      const fg=validGwas.length?validGwas.reduce((a,b)=>a+b,0)/validGwas.length:null;
+      const isHonor=fg!==null&&(isCol?fg<=1.75:fg>=90);
+      const isPassed=fg!==null&&(isCol?fg<=3.0:fg>=75);
+      const statusCls=isHonor?"honor-tag":isPassed?"pass-tag":"fail-tag";
+      const statusTxt=isHonor?"🏆 With Honors":isPassed?"✅ Passed":"❌ Failed";
+      const termCells=gwas.map(g=>g!==null?`<td style="text-align:center;font-weight:700">${g.toFixed(2)}</td>`:`<td style="text-align:center;color:#cbd5e1">—</td>`).join("");
+      return `<tr>
+        <td style="color:#94a3b8">${i+1}</td>
+        <td class="photo-cell">${avatarEl}</td>
+        <td><strong>${s.name}</strong><br><span style="font-size:10px;color:#94a3b8">${s.school||""}</span></td>
+        <td>${s.gradeNumber}</td>
+        ${termCells}
+        <td style="text-align:center;font-weight:800;font-size:13px">${fg!==null?fg.toFixed(2):"—"}</td>
+        <td class="${statusCls}">${statusTxt}</td>
+      </tr>`;
+    }).join("");
+
+    html+=`<div class="doc-section">
+      <h4>${lvl.label} — ${scholars.length} Scholar${scholars.length!==1?"s":""}</h4>
+      <table>
+        <thead><tr><th>#</th><th></th><th>Scholar</th><th>Grade/Year</th>${termHeaders}<th>Final GWA</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  });
+
+  // Honors Roll section
+  const honors=allScholars.filter(s=>{
+    const isCol=s.level==="college";
+    const isHS=s.level==="hs";
+    const order=isCol?QTR_ORDER_COL:isHS?QTR_ORDER_HS:QTR_ORDER_ELEM;
+    const gwas=order.filter(q=>s.quarters[q]).map(q=>{
+      const qd=s.quarters[q];
+      if(isCol) return parseFloat(calcCollegeGwa(qd.grades));
+      const v=Object.values(parseGradeStr(qd.grades)).filter(v=>!isNaN(v));
+      return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;
+    }).filter(g=>g!==null);
+    const fg=gwas.length?gwas.reduce((a,b)=>a+b,0)/gwas.length:null;
+    return fg!==null&&(isCol?fg<=1.75:fg>=90);
+  });
+  if(honors.length){
+    html+=`<div class="doc-section"><h4>🏆 Honors Roll</h4>
+    <table><thead><tr><th>#</th><th></th><th>Scholar</th><th>Grade/Year</th><th>Level</th><th>GWA</th></tr></thead><tbody>`;
+    honors.forEach((s,i)=>{
+      const isCol=s.level==="college";
+      const isHS=s.level==="hs";
+      const order=isCol?QTR_ORDER_COL:isHS?QTR_ORDER_HS:QTR_ORDER_ELEM;
+      const gwas=order.filter(q=>s.quarters[q]).map(q=>{
+        const qd=s.quarters[q];
+        if(isCol) return parseFloat(calcCollegeGwa(qd.grades));
+        const v=Object.values(parseGradeStr(qd.grades)).filter(v=>!isNaN(v));
+        return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;
+      }).filter(g=>g!==null);
+      const fg=gwas.reduce((a,b)=>a+b,0)/gwas.length;
+      const photo=scholarPhotoByName(s.name);
+      const avatarEl=photo?`<img src="${photo}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle">`:`<span class="ph" style="background:${getAvatarColor(s.name)}">${getInitials(s.name)}</span>`;
+      const lvlLabel=s.level==="hs"?"High School":s.level==="college"?"College":"Grade School";
+      html+=`<tr><td>${i+1}</td><td class="photo-cell">${avatarEl}</td><td><strong>${s.name}</strong></td><td>${s.gradeNumber}</td><td>${lvlLabel}</td><td style="font-weight:800;color:#854d0e">${fg.toFixed(2)}</td></tr>`;
+    });
+    html+=`</tbody></table></div>`;
+  }
+
+  html+=`<div class="doc-meta"><span>SMSP Scholarship Grade Portal</span><span>Page 1 of 1 &nbsp;·&nbsp; Confidential</span></div>`;
+  document.getElementById("pdf-preview").innerHTML=html;
+}
+
+function printPdfReport(){
+  const content=document.getElementById("pdf-preview").innerHTML;
+  const syear=document.getElementById("pdf-syear").value||"All Years";
+  const w=window.open("","_blank","width=900,height=700");
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>SMSP Sponsor Report ${syear}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Segoe UI",Arial,sans-serif;background:#fff;padding:24px;color:#1a202c;font-size:12px}
+    .doc-title{font-size:22px;font-weight:800;color:#1e3a5f;text-align:center;margin-bottom:4px}
+    .doc-sub{font-size:12px;color:#64748b;text-align:center;margin-bottom:16px}
+    .doc-meta{display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:16px;border-top:1px solid #e2e8f0;padding-top:8px}
+    .stat-row{display:flex;gap:12px;margin-bottom:16px}
+    .stat-box{flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;text-align:center}
+    .sb-val{font-size:22px;font-weight:800;color:#1e3a5f}
+    .sb-lbl{font-size:10px;color:#94a3b8;text-transform:uppercase;margin-top:2px}
+    .doc-section{margin-bottom:16px;page-break-inside:avoid}
+    .doc-section h4{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#1e3a5f,#2563eb);padding:6px 10px;border-radius:4px 4px 0 0;margin:0}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:0 0 6px 6px}
+    table th{background:#f0f4f8;color:#374151;padding:5px 8px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+    table td{padding:5px 8px;border-bottom:1px solid #f8fafc;vertical-align:middle;font-size:11px}
+    table tr:last-child td{border-bottom:none}
+    .honor-tag{color:#854d0e;font-weight:700}
+    .pass-tag{color:#166534;font-weight:600}
+    .fail-tag{color:#dc2626;font-weight:600}
+    .ph{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;vertical-align:middle}
+    @page{size:A4;margin:1.5cm}
+    @media print{.stat-box{border:1px solid #ccc}h4{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  </style></head><body>${content}</body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),800);
+}
 </script>
 
 
