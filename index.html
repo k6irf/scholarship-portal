@@ -1618,9 +1618,16 @@ function renderSummary(){
         }).join("");
       }
     } else {
-      // K-12 / HS: original logic
+      // K-12 / HS: use actual subject names from data (full names, not abbreviations)
       const subjAvgs={};
-      K12_SUBJECTS.forEach(s=>{
+      const allSubjNames=[];
+      submitted.forEach(q=>{
+        Object.keys(st.quarters[q]).forEach(s=>{
+          if(!allSubjNames.includes(s)) allSubjNames.push(s);
+        });
+      });
+      const subjList = allSubjNames.length ? allSubjNames : K12_SUBJECTS;
+      subjList.forEach(s=>{
         const vals=submitted.map(q=>st.quarters[q][s]).filter(v=>v!==undefined&&!isNaN(v));
         if(vals.length) subjAvgs[s]=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
       });
@@ -1629,7 +1636,7 @@ function renderSummary(){
       isHonor=parseFloat(finalGWA)>=90;
       honorLabel=isHonor?"🏆 With Honors":"✅ Passed";
       honorClass=isHonor?"honors":"passed";
-      subjBoxes=K12_SUBJECTS.map(s=>`<div class="subj-avg"><div class="sa-name">${s}</div><div class="sa-val">${subjAvgs[s]||"—"}</div></div>`).join("");
+      subjBoxes=subjList.map(s=>`<div class="subj-avg"><div class="sa-name">${s}</div><div class="sa-val">${subjAvgs[s]||"—"}</div></div>`).join("");
     }
 
     const qtrPills=submitted.map((q,i)=>`<span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:8px;font-weight:600">${q}: ${qtrGWAs[i]!=null?qtrGWAs[i].toFixed(2):"—"}</span>`).join(" ");
