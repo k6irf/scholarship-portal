@@ -1487,8 +1487,10 @@ function renderSummary(){
   if(!allPosts.length){section.style.display="none";return;}
   const byStudent={};
   allPosts.forEach(p=>{
-    if(!byStudent[p.name]) byStudent[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:p.level||"elem",quarters:{}};
+    if(!byStudent[p.name]) byStudent[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:p.level||"elem",quarters:{},rawPosts:{}};
+    // Store both parsed (for K-12) and raw string (for college detection)
     byStudent[p.name].quarters[p.quarter]=parseGradeStr(p.grades);
+    byStudent[p.name].rawPosts[p.quarter]=p.grades;
   });
   // Apply same level/quarter filter as Grade Board
   let students=Object.values(byStudent);
@@ -1497,29 +1499,74 @@ function renderSummary(){
   else if(activeFilter==="college") students=students.filter(st=>scholarLevelByName(st.name,st.level)==="college");
   else if(activeFilter==="s1") students=students.filter(st=>Object.keys(st.quarters).some(q=>q==="1st Semester"));
   else if(activeFilter==="s2") students=students.filter(st=>Object.keys(st.quarters).some(q=>q==="2nd Semester"));
-  const SUBJECTS=["Fil","Eng","Math","Sci","AP","MAPEH","EPP","ESP"];
+  const K12_SUBJECTS=["Fil","Eng","Math","Sci","AP","MAPEH","EPP","ESP"];
   const QTR_ORDER_ELEM=["First Quarter","Second Quarter","Third Quarter","Fourth Quarter"];
   const QTR_ORDER_HS=["Term 1","Term 2","Term 3"];
+  const QTR_ORDER_COLLEGE=["1st Semester","2nd Semester"];
   const cards=students.map(st=>{
     const stLevel=scholarLevelByName(st.name, st.level);
-    const QTR_ORDER = stLevel==="hs" ? QTR_ORDER_HS : QTR_ORDER_ELEM;
-    const submitted=QTR_ORDER.filter(q=>st.quarters[q]&&Object.keys(st.quarters[q]).length>0);
+    const isCollege = stLevel==="college";
+    const QTR_ORDER = isCollege ? QTR_ORDER_COLLEGE : (stLevel==="hs" ? QTR_ORDER_HS : QTR_ORDER_ELEM);
+    const submitted=QTR_ORDER.filter(q=>st.rawPosts[q] && st.rawPosts[q].trim()!=="");
     const qCount=submitted.length;
     const photo=scholarPhotoByName(st.name);
-    const color=getAvatarColor(st.name);
     const lvlBadge=stLevel==="hs"?'<span class="badge hs">High School</span>':stLevel==="college"?'<span class="badge college">College</span>':'<span class="badge elem">Grade School</span>';
-    const subjAvgs={};
-    SUBJECTS.forEach(s=>{
-      const vals=submitted.map(q=>st.quarters[q][s]).filter(v=>v!==undefined&&!isNaN(v));
-      if(vals.length) subjAvgs[s]=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
-    });
-    const qtrGWAs=submitted.map(q=>{const v=Object.values(st.quarters[q]).filter(v=>!isNaN(v));return v.length?(v.reduce((a,b)=>a+b,0)/v.length):null;}).filter(v=>v!==null);
-    const finalGWA=qtrGWAs.length?(qtrGWAs.reduce((a,b)=>a+b,0)/qtrGWAs.length).toFixed(2):"—";
-    const isHonor=parseFloat(finalGWA)>=90;
-    const qtrPills=submitted.map((q,i)=>`<span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:8px;font-weight:600">${q.replace(" Quarter","")}: ${qtrGWAs[i]?qtrGWAs[i].toFixed(2):"—"}</span>`).join(" ");
-    const subjBoxes=SUBJECTS.map(s=>`<div class="subj-avg"><div class="sa-name">${s}</div><div class="sa-val">${subjAvgs[s]||"—"}</div></div>`).join("");
-    const totalTerms = stLevel==="hs" ? 3 : stLevel==="college" ? 2 : 4;
-    const termWord = stLevel==="hs" ? "term" : stLevel==="college" ? "semester" : "quarter";
+    const totalTerms = isCollege ? 2 : stLevel==="hs" ? 3 : 4;
+    const termWord = isCollege ? "semester" : stLevel==="hs" ? "term" : "quarter";
+
+    let subjBoxes="", qtrGWAs=[], finalGWA="—", isHonor=false, honorLabel="✅ Passed", honorClass="passed";
+
+    if(isCollege){
+      // College: parse pipe-format grades, compute weighted GWA per semester
+      // Collect all unique subject names across submitted semesters
+      const semSubjects={};
+      submitted.forEach(q=>{
+        const raw=st.rawPosts[q];
+        if(!raw) return;
+        const parsed=parseCollegeGrades(raw);
+        const validGrades=parsed.filter(s=>s.grade!==null&&s.grade<=5.0);
+        // Weighted GWA for this semester
+        const totalUnits=validGrades.reduce((a,s)=>a+s.units,0);
+        const weightedSum=validGrades.reduce((a,s)=>a+s.grade*s.units,0);
+        if(totalUnits>0) qtrGWAs.push(weightedSum/totalUnits);
+        // Track subject grades per subject name
+        parsed.forEach(s=>{
+          if(!semSubjects[s.name]) semSubjects[s.name]={grades:[],units:s.units};
+          if(s.grade!==null) semSubjects[s.name].grades.push(s.grade);
+        });
+      });
+      finalGWA=qtrGWAs.length?(qtrGWAs.reduce((a,b)=>a+b,0)/qtrGWAs.length).toFixed(2):"—";
+      const gwaNum=parseFloat(finalGWA);
+      isHonor=gwaNum<=1.75;
+      honorLabel=isNaN(gwaNum)?"—":gwaNum<=1.75?"🏆 With Honors":gwaNum<=3.0?"✅ Passed":"❌ Failed";
+      honorClass=isNaN(gwaNum)?"passed":gwaNum<=1.75?"honors":gwaNum<=3.0?"passed":"grade-fail";
+      // Subject boxes: show actual college subjects
+      const subjNames=Object.keys(semSubjects);
+      if(subjNames.length===0){
+        subjBoxes=`<div style="color:#94a3b8;font-size:13px;padding:8px">No subject data available.</div>`;
+      } else {
+        subjBoxes=subjNames.map(s=>{
+          const vals=semSubjects[s].grades;
+          const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2):"—";
+          return `<div class="subj-avg"><div class="sa-name">${s}</div><div class="sa-val">${avg}</div></div>`;
+        }).join("");
+      }
+    } else {
+      // K-12 / HS: original logic
+      const subjAvgs={};
+      K12_SUBJECTS.forEach(s=>{
+        const vals=submitted.map(q=>st.quarters[q][s]).filter(v=>v!==undefined&&!isNaN(v));
+        if(vals.length) subjAvgs[s]=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+      });
+      qtrGWAs=submitted.map(q=>{const v=Object.values(st.quarters[q]).filter(v=>!isNaN(v));return v.length?(v.reduce((a,b)=>a+b,0)/v.length):null;}).filter(v=>v!==null);
+      finalGWA=qtrGWAs.length?(qtrGWAs.reduce((a,b)=>a+b,0)/qtrGWAs.length).toFixed(2):"—";
+      isHonor=parseFloat(finalGWA)>=90;
+      honorLabel=isHonor?"🏆 With Honors":"✅ Passed";
+      honorClass=isHonor?"honors":"passed";
+      subjBoxes=K12_SUBJECTS.map(s=>`<div class="subj-avg"><div class="sa-name">${s}</div><div class="sa-val">${subjAvgs[s]||"—"}</div></div>`).join("");
+    }
+
+    const qtrPills=submitted.map((q,i)=>`<span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:8px;font-weight:600">${q}: ${qtrGWAs[i]!=null?qtrGWAs[i].toFixed(2):"—"}</span>`).join(" ");
     return `<div class="summary-card ${stLevel}">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
         ${avatarHtml(st.name, photo)}
@@ -1529,7 +1576,7 @@ function renderSummary(){
       <div class="summary-body">${subjBoxes}</div>
       <div class="final-gwa-row"><span style="font-size:13px;color:#64748b;font-weight:600">Final GWA</span>
         <span class="final-gwa-val">${finalGWA}</span>
-        <span class="honor-badge ${isHonor?'honors':'passed'}">${isHonor?'🏆 With Honors':'✅ Passed'}</span>
+        <span class="honor-badge ${honorClass}">${honorLabel}</span>
         <span style="font-size:12px;color:#94a3b8;margin-left:auto">Based on ${qCount} ${termWord}${qCount>1?"s":""}</span>
       </div></div>`;
   }).join("");
