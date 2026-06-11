@@ -2593,8 +2593,7 @@ function copyFbCard(){
   lines.push("");
   lines.push("Keep striving for excellence! 💪");
   lines.push("#SMSP #Scholarship #ScholarUpdate #WithHonors");
-  navigator.clipboard.writeText(lines.join("
-")).then(()=>showToast("✅ Caption copied to clipboard!")).catch(()=>showToast("⚠️ Could not copy. Try manually selecting the text."));
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>showToast("✅ Caption copied to clipboard!")).catch(()=>showToast("⚠️ Could not copy. Try manually selecting the text."));
 }
 
 function printFbCard(){
