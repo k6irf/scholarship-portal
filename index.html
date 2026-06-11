@@ -2172,7 +2172,8 @@ function buildReport(){
   allPosts.forEach(p => {
     if(syearFilter && p.syear !== syearFilter) return;
     if(!byScholar[p.name]) byScholar[p.name] = {name:p.name, gradeNumber:p.gradeNumber, level:scholarLevelByName(p.name,p.level), quarters:{}};
-    byScholar[p.name].quarters[p.quarter] = {grades:p.grades, gwa:p.gwa, syear:p.syear, editedAt:p.editedAt||""};
+    const rptQ = normalizeHsTerm(p.quarter, byScholar[p.name].level);
+    byScholar[p.name].quarters[rptQ] = {grades:p.grades, gwa:p.gwa, syear:p.syear, editedAt:p.editedAt||""};
   });
 
   let html = "";
@@ -2292,7 +2293,8 @@ function exportReportCSV(){
   allPosts.forEach(p => {
     if(syearFilter && p.syear !== syearFilter) return;
     if(!byScholar[p.name]) byScholar[p.name]={name:p.name,gradeNumber:p.gradeNumber,level:scholarLevelByName(p.name,p.level),quarters:{}};
-    byScholar[p.name].quarters[p.quarter]={grades:p.grades,syear:p.syear,editedAt:p.editedAt||""};
+    const csvQ = normalizeHsTerm(p.quarter, byScholar[p.name].level);
+    byScholar[p.name].quarters[csvQ]={grades:p.grades,syear:p.syear,editedAt:p.editedAt||""};
   });
 
   Object.values(byScholar).forEach(s => {
