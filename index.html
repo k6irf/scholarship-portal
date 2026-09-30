@@ -25,9 +25,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
 
 /* TOPBAR */
 #app{display:none}
-.topbar{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
-.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;padding:.5rem 1.5rem;min-height:58px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;position:sticky;top:0;z-index:100}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;flex-shrink:0}
+.topbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .user-pill{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:13px}
 .btn-topbar{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer}
 .btn-topbar:hover{background:rgba(255,255,255,.25)}
@@ -146,10 +146,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;min-height:1
 
 @media(max-width:640px){
   /* Topbar */
-  .topbar{padding:.5rem .75rem;gap:4px;flex-wrap:wrap}
+  .topbar{padding:.4rem .75rem;gap:4px}
   .topbar-brand{font-size:12px}
+  .topbar-right{gap:4px}
   .user-pill{display:none}
-  .btn-topbar{font-size:11px;padding:5px 8px}
+  .btn-topbar{font-size:11px;padding:4px 7px}
   /* Main content */
   .main{padding:.75rem}
   /* Filters */
